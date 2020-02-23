@@ -19,6 +19,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.app.ernext.fragments.chefdetails.ChefDetails
 import kr.co.namee.permissiongen.PermissionGen
+import android.support.design.internal.BottomNavigationItemView
+import java.lang.reflect.AccessibleObject.setAccessible
+import java.lang.reflect.Array.setBoolean
+import android.support.design.internal.BottomNavigationMenuView
+import android.support.design.widget.BottomNavigationView
+import android.util.Log
+import android.widget.Toast
+
 
 object Utils {
 
@@ -35,6 +43,33 @@ object Utils {
         fragment.exitTransition = Fade(Fade.OUT)
 
         transaction?.commit()
+    }
+
+
+    object BottomNavigationViewHelper {
+        @SuppressLint("RestrictedApi")
+        fun removeShiftMode(view: BottomNavigationView) {
+            val menuView = view.getChildAt(0) as BottomNavigationMenuView
+            try {
+                val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
+                shiftingMode.isAccessible = true
+                shiftingMode.setBoolean(menuView, false)
+                shiftingMode.isAccessible = false
+                for (i in 0 until menuView.childCount) {
+                    val item = menuView.getChildAt(i) as BottomNavigationItemView
+
+                    item.setShiftingMode(false)
+                    // set once again checked value, so view will be updated
+
+                    item.setChecked(item.itemData.isChecked)
+                }
+            } catch (e: NoSuchFieldException) {
+                Log.e("BottomNav", "Unable to get shift mode field", e)
+            } catch (e: IllegalAccessException) {
+                Log.e("BottomNav", "Unable to change value of shift mode", e)
+            }
+
+        }
     }
 
     fun addFragmentInActivityFadeAnimation(fragmentManager: FragmentManager?, fragment: Fragment, frameId: Int, addToBackstack: Boolean, tag: String) {
@@ -63,6 +98,11 @@ object Utils {
     /* Show Snackbar on validation check */
     fun showSnackbar(parentLayoutId: View, msg: String, timeInMillis: Int) {
         Snackbar.make(parentLayoutId, msg, timeInMillis).show()
+    }
+
+    /* Show Snackbar on validation check */
+    fun showToast(context: Context, msg: String) {
+        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show()
     }
 
     /* Hide keyboard while changing from one activity to another fragment */

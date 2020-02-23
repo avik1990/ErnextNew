@@ -21,7 +21,6 @@ import java.util.ArrayList;
  */
 public class SlidingAdapter_dash extends PagerAdapter {
 
-
     private ArrayList<String> IMAGES;
     private ArrayList<String> TITLE;
     private LayoutInflater inflater;

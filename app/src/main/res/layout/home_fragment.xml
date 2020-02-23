@@ -38,23 +38,25 @@
                     android:layout_below="@+id/viewpager"
                     android:visibility="gone" />
 
+                <include
+                    android:id="@+id/dashButtons"
+                    layout="@layout/dash_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/viewpager"
+                    android:visibility="visible" />
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/fc_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/viewpager"
+                    android:layout_below="@+id/dashButtons"
                     android:fadeScrollbars="true"
                     android:overScrollMode="never"
                     android:scrollbarStyle="outsideInset"
                     android:scrollbars="horizontal" />
             </RelativeLayout>
 
-            <include
-                layout="@layout/dash_buttons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/main_view"
-                android:visibility="visible" />
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
+    android:background="@color/white"
     tools:context=".activity.LoginActivity">
 
     <ImageView
@@ -191,7 +191,6 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_14sdp" />
 
-
                     <RelativeLayout
                         android:id="@+id/rl_signup"
                         android:layout_width="match_parent"
@@ -219,9 +218,19 @@
                             android:textAllCaps="false"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="@dimen/_14sdp" />
-
-
                     </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_below="@+id/rl_signup"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:text="Skip Login>>"
+                        android:layout_height="wrap_content"/>
+
+
+
 
                 </RelativeLayout>
             </RelativeLayout>

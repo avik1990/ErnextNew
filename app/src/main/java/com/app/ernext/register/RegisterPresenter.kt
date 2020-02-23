@@ -1,12 +1,23 @@
 package com.app.ernext.register
 
 import android.content.Context
+import android.util.Log
 import com.app.ernext.R
+import com.app.ernext.others.Constants
+import com.app.ernext.others.showToast
+import com.app.ernext.register.servicecall.RegisterRepository
+import com.google.gson.GsonBuilder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
-class RegisterPresenter(viewSignup: RegisterContract.View, context: Context) : RegisterContract.Presenter {
+class RegisterPresenter(viewSignup: RegisterContract.View, context: Context,private val signUpRepository: RegisterRepository) :
+        RegisterContract.Presenter {
 
     var viewSignup: RegisterContract.View
     var context: Context
+    private var disposable: Disposable? = null
+    val TAG = "RegisterPresenter"
 
     init {
         this.context = context
@@ -14,69 +25,107 @@ class RegisterPresenter(viewSignup: RegisterContract.View, context: Context) : R
         viewSignup.setPresenter(this)
     }
 
-    override fun checkFieldsValidation(name: String, email: String, countrycode: String, phoneno: String, password: String, usertype: String, isChecked: Boolean) {
+    override fun checkFieldsValidation(name: String,
+                                       email: String,
+                                       password: String,
+                                       countrycode: String,
+                                       phoneno: String,
+                                       isChecked: Boolean): Boolean {
 
-        /* Field Order wise validation messages */
         if (name.trim().length == 0) {
             viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptyNameField))
-            return
+            return false
         }
 
         if (email.trim().length == 0) {
             viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptyEmailIdField))
-            return
-        } else {
-        }
-
-        if (countrycode.trim().length == 0) {
-            viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptycountrycode))
-            return
-        } else {
-        }
-
-        if (phoneno.trim().length == 0) {
-            viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptycphonenumber))
-            return
+            return false
         } else {
         }
 
         if (password.trim().length == 0) {
             viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptycpassword))
-            return
+            return false
         } else {
         }
 
-        if (usertype.trim().length == 0) {
-            viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptyusertype))
-            return
+        if (countrycode.trim().length == 0) {
+            viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptycountrycode))
+            return false
+        } else {
+        }
+
+        if (phoneno.trim().length == 0) {
+            viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptycphonenumber))
+            return false
         } else {
         }
 
         if (isChecked == false) {
             viewSignup.fieldsValidationFailed(viewSignup.getContext().getString(R.string.emptytermscondition))
-            return
+            return false
         } else {
         }
-        signupUser()
+
+        return true
+
     }
 
     override fun getDefaultCountryCode() {
     }
 
-    override fun signupUser() {
-        // viewSignup.fieldsValidationFailed("Success")
-        viewSignup.goToNextPage()
+    override fun signupUser(name: String,
+                            email: String,
+                            password: String,
+                            isdCode: String,
+                            mobile: String,
+                            mode: String,
+                            device_token: String,
+                            device_id: String,
+                            device_type: String) {
+
+        if (!viewSignup.isNetworkAvailable()) {
+            viewSignup.showNetworkUnavailableMsg()
+            return
+        }
+
+        viewSignup.handleProgressAlert(true)
+        disposable = signUpRepository.callLoginApi(name, email, password, isdCode, mobile, mode,device_token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    // Log.e(TAG, it.Response().data.toString() +"\n"+it.Response().salt.toString())
+                    viewSignup.handleProgressAlert(false)
+                    if (it.status.equals("1")) {
+                        showToast(context,it.msg.toString())
+                    }else{
+                        showToast(context,it.msg.toString())
+                    }
+
+                }, {
+                    Log.e(TAG, it.toString())
+                    if (viewSignup.isActivityRunning()) {
+                        viewSignup.handleProgressAlert(false)
+                        if (viewSignup.isNetworkAvailable())
+                            viewSignup.showSomeErrorOccurredMsg(viewSignup.getContext().getString(R.string.someErrorOccurred))
+                        else viewSignup.showNetworkUnavailableMsg()
+                    }
+                })
     }
 
     override fun goToPrivacyPolicy() {
+
     }
 
     override fun checkTermsConditions() {
+
     }
 
     override fun start() {
+
     }
 
     override fun stop() {
+
     }
 }

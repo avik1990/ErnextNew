@@ -9,11 +9,21 @@ interface RegisterContract {
 
     interface Presenter : BasePresenter {
 
-        fun checkFieldsValidation(name: String, email: String, countrycode: String, phoneno: String,
-                                  password: String, usertype: String, isChecked: Boolean)
+        fun checkFieldsValidation(name: String, email: String,password: String, countrycode: String, phoneno: String,
+                                  isChecked: Boolean): Boolean
 
         fun getDefaultCountryCode()
-        fun signupUser()
+
+        fun signupUser(name: String,
+                       email: String,
+                       password: String,
+                       isdCode: String,
+                       mobile: String,
+                       mode: String,
+                       device_token: String,
+                       device_id: String,
+                       device_type: String)
+
         fun goToPrivacyPolicy()
         fun checkTermsConditions()
     }

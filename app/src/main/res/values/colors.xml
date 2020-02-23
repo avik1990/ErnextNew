@@ -33,4 +33,6 @@
     <color name="light_grey">#dbdbdb</color>
     <color name="nav_grey">#c5c5c5</color>
     <color name="search_shadow_layout">#80000000</color>
+
+    <color name="gray_divider">#888888</color>
 </resources>

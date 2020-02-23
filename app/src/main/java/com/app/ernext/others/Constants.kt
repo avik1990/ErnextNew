@@ -1,6 +1,9 @@
 package com.app.ernext.others
 
 import android.content.Context
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 object Constants {
 
@@ -27,6 +30,7 @@ object Constants {
         val SEND_MONEY_TAB_POSITION = 0
         val REQUEST_MONEY_TAB_POSITION = 1
         val PAY_MONEY_TAB_POSITION = 2
+        val DEVICE_TYPE = "A"
 
         /* Required to select country codes and return to the calling activity with result */
         val KEY_SELECTED_COUNTRY_CODE = "keySelectedCountryCode"
@@ -53,6 +57,27 @@ object Constants {
     }
 
     object Services {
-        val BASE_URL = ""
+        val BASE_URL = "https://neuifood.com/api/user/"
+    }
+
+    fun setTimeOut(): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        return OkHttpClient().newBuilder()
+                .connectTimeout(100 * 10, TimeUnit.SECONDS)
+                .readTimeout(100 * 10, TimeUnit.SECONDS)
+                .writeTimeout(100 * 10, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                            ?.newBuilder()
+                            //?.addHeader("Content-Type", "application/json")
+                            ?.addHeader("Content-Type", "application/json")
+                            ?.build()
+                    chain.proceed(request)
+                }
+                .addInterceptor(loggingInterceptor)
+                .build()
     }
 }

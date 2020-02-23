@@ -32,6 +32,25 @@
     <string name="emptycpassword">Please Enter Password</string>
     <string name="emptyusertype">Please Enter User Type</string>
     <string name="emptytermscondition"><![CDATA[Please Check Terms & Condition]]></string>
+    <string name="someErrorOccurred">Something went wrong</string>
+
+    <string name="verifyPhoneNumber">Verify Phone Number</string>
+    <string name="otpSentMsg">An OTP has been sent to %1$s</string>
+    <string name="enterTheOtp">Please enter the OTP</string>
+    <string name="verifyOtp">Verify OTP</string>
+    <string name="verify">Verify</string>
+    <string name="resendOtp">Resend</string>
+    <string name="didntReceiveOtp">Didn\'t Receive an OTP?</string>
+    <string name="submit">Submit</string>
+
+    <!-- Custom fonts name -->
+    <string name="quicksandMedium">font/Quicksand-Medium.ttf</string>
+    <string name="quicksandRegular">font/Quicksand-Regular.ttf</string>
+    <string name="quicksandLight">font/Quicksand-Light.ttf</string>
+    <string name="dot">•</string>
+    <string name="dollar">$</string>
+
+    <string name="networkUnavailable">Please check your internet connection.</string>
 
     <string-array name="countryCodes" >
         <item>93,AF</item>

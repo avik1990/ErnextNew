@@ -12,7 +12,9 @@ import com.app.ernext.fragments.home.Homefragment
 import com.app.ernext.home.Dashboard
 import com.app.ernext.others.Constants
 import com.app.ernext.others.Utils
-import kotlinx.android.synthetic.main.activity_login.*
+import com.app.ernext.others.showToast
+import com.app.ernext.otp.OTPActivity
+import com.app.ernext.register.servicecall.RegisterProvider
 import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.activity_register.rl_signup
 import kotlinx.android.synthetic.main.activity_register.tv_register
@@ -25,9 +27,11 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
     var isUserTypeChecked: Boolean = false
     var userType: String = ""
 
+
     override fun initResources() {
-        RegisterPresenter(this, this).start()
         contex = this
+        RegisterPresenter(this, contex!!,RegisterProvider.getLoginRepository()).start()
+
     }
 
     override fun initListeners() {
@@ -44,13 +48,28 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
         }
 
         btn_register.setOnClickListener {
-            val i = Intent(contex, Dashboard::class.java)
-            i.putExtra(Constants.Keys.KEY_FRAGMENT_NAME, Homefragment.CLASS_NAME)
+            val i = Intent(contex, OTPActivity::class.java)
+            //i.putExtra(Constants.Keys.KEY_FRAGMENT_NAME, OTPActivity::class.java)
             startActivity(i)
+           // registerUser()
         }
 
         chk_box.setOnCheckedChangeListener { compoundButton, isChecked ->
             isPrivacyChecked = isChecked
+        }
+    }
+
+    private fun registerUser() {
+        if(signupPresenter.checkFieldsValidation(et_name.text.toString().trim(),et_email.text.toString().trim(),
+                et_password.text.toString().trim(),
+                et_isd.text.toString().trim(),et_number.text.toString().trim(),
+                isPrivacyChecked)){
+
+            signupPresenter.signupUser(et_name.text.toString().trim(),et_email.text.toString().trim(),
+                    et_password.text.toString().trim(),
+                    et_isd.text.toString().trim(),et_number.text.toString().trim(),"direct",
+                    "ssfhb23",
+                    "0000","A")
         }
     }
 
@@ -117,6 +136,7 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
     }
 
     override fun showSomeErrorOccurredMsg(msg: String) {
-        Toast.makeText(contex, "", Toast.LENGTH_SHORT).show()
+        Toast.makeText(contex, msg, Toast.LENGTH_SHORT).show()
     }
+
 }

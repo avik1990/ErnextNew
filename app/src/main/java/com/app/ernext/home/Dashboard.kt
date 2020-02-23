@@ -1,5 +1,6 @@
 package com.app.ernext.home
 
+import android.content.Context
 import android.content.Intent
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -16,9 +17,17 @@ import com.app.ernext.fragments.home.Homefragment
 import com.app.ernext.others.CircularTextView
 import com.app.ernext.others.Constants
 import com.app.ernext.others.Utils
+import kotlinx.android.synthetic.main.activity_dashboard.*
 import kotlinx.android.synthetic.main.toolbar.*
+import android.support.design.widget.BottomNavigationView
+import com.app.ernext.fragments.chefs.FragmentChefs
+import com.app.ernext.fragments.menus.FragmentDeals
+import com.app.ernext.fragments.menus.FragmentMenus
+import com.app.ernext.fragments.menus.Fragmentprofile
 
 class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    lateinit var context:Context
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -29,7 +38,50 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
     }
 
     override fun initResources() {
+        context=this
         parseIntent(intent)
+
+        bottomNavigation.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
+
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    if (supportFragmentManager.findFragmentById(R.id.container) !is Homefragment) {
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, Homefragment.newInstance(),
+                                R.id.container, true, Homefragment.CLASS_NAME)
+                    }
+                }
+
+                R.id.nav_chefs -> {
+                    if (supportFragmentManager.findFragmentById(R.id.container) !is FragmentChefs) {
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, FragmentChefs.newInstance(),
+                                R.id.container, true, FragmentChefs.CLASS_NAME)
+                    }
+                }
+
+                R.id.nav_menus-> {
+                    if (supportFragmentManager.findFragmentById(R.id.container) !is FragmentMenus) {
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, FragmentMenus.newInstance(),
+                                R.id.container, true, FragmentMenus.CLASS_NAME)
+                    }
+                }
+
+                R.id.nav_deals-> {
+                    if (supportFragmentManager.findFragmentById(R.id.container) !is FragmentDeals) {
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, FragmentDeals.newInstance(),
+                                R.id.container, true, FragmentDeals.CLASS_NAME)
+                    }
+                }
+                R.id.nav_profile-> {
+                    if (supportFragmentManager.findFragmentById(R.id.container) !is Fragmentprofile) {
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, Fragmentprofile.newInstance(),
+                                R.id.container, true, Fragmentprofile.CLASS_NAME)
+                    }
+                }
+            }
+
+            true
+        })
+
     }
 
     override fun initListeners() {
@@ -44,6 +96,7 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
 
         val tv_cartcount = findViewById<CircularTextView>(R.id.tv_cartcount)
         tv_cartcount.setSolidColor("#002f49")
+        Utils.BottomNavigationViewHelper.removeShiftMode(bottomNavigation)
     }
 
     override fun getLayout(): Int {
@@ -73,19 +126,22 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
         Utils.hideKeyboard(this)
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
-             if (supportFragmentManager.findFragmentById(R.id.container) is ChefDetails) {
+             if (supportFragmentManager.findFragmentById(R.id.container) is Homefragment) {
                  Log.e("HomeActivity", "SavedBanksFragment")
-                 setUpScreenUiForFragment(Homefragment.CLASS_NAME)
+                 bottomNavigation.selectedItemId = R.id.nav_home;
+                // setUpScreenUiForFragment(Homefragment.CLASS_NAME)
              }
-            /*else if (supportFragmentManager.findFragmentById(R.id.flFragmentContainerHome) is AddBankAccountFragment){
+            else if (supportFragmentManager.findFragmentById(R.id.container) is FragmentChefs){
                 Log.e("HomeActivity","AddBankAccountFragment")
-                setUpScreenUiForFragment(SavedBanksFragment.CLASS_NAME)
+                 bottomNavigation.selectedItemId = R.id.nav_home
+                //setUpScreenUiForFragment(SavedBanksFragment.CLASS_NAME)
             }
-            else if (supportFragmentManager.findFragmentById(R.id.flFragmentContainerHome) is EditProfileFragment){
-                Log.e("HomeActivity","EditProfileFragment")
-                setUpScreenUiForFragment(ViewProfileFragment.CLASS_NAME)
+            else if (supportFragmentManager.findFragmentById(R.id.container) is ChefDetails){
+                 Log.e("HomeActivity","EditProfileFragment")
+                 bottomNavigation.selectedItemId = R.id.nav_chefs
+                //setUpScreenUiForFragment(ViewProfileFragment.CLASS_NAME)
             }
-            else if (supportFragmentManager.findFragmentById(R.id.flFragmentContainerHome) is CompleteYourPaymentFragment){
+           /* else if (supportFragmentManager.findFragmentById(R.id.flFragmentContainerHome) is CompleteYourPaymentFragment){
                 Log.e("HomeActivity","CompleteYourPaymentFragment")
                 setUpScreenUiForFragment(AddMoneyEnterAmountFragment.CLASS_NAME)
             }*/
