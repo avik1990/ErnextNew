@@ -1,7 +1,7 @@
 package com.app.ernext.fragments.chefdetails
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import com.app.ernext.BaseFragment
 import com.app.ernext.R

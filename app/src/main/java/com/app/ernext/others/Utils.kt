@@ -9,21 +9,22 @@ import android.hardware.Camera
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
 import android.transition.Fade
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.app.ernext.fragments.chefdetails.ChefDetails
 import kr.co.namee.permissiongen.PermissionGen
-import android.support.design.internal.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import java.lang.reflect.AccessibleObject.setAccessible
 import java.lang.reflect.Array.setBoolean
-import android.support.design.internal.BottomNavigationMenuView
-import android.support.design.widget.BottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.util.Log
 import android.widget.Toast
 
@@ -57,10 +58,8 @@ object Utils {
                 shiftingMode.isAccessible = false
                 for (i in 0 until menuView.childCount) {
                     val item = menuView.getChildAt(i) as BottomNavigationItemView
-
-                    item.setShiftingMode(false)
+                    item.setShifting(false)
                     // set once again checked value, so view will be updated
-
                     item.setChecked(item.itemData.isChecked)
                 }
             } catch (e: NoSuchFieldException) {
@@ -68,11 +67,21 @@ object Utils {
             } catch (e: IllegalAccessException) {
                 Log.e("BottomNav", "Unable to change value of shift mode", e)
             }
-
         }
     }
 
     fun addFragmentInActivityFadeAnimation(fragmentManager: FragmentManager?, fragment: Fragment, frameId: Int, addToBackstack: Boolean, tag: String) {
+        val transaction = fragmentManager?.beginTransaction()
+        transaction?.add(frameId, fragment, tag)
+        if (addToBackstack)
+            transaction?.addToBackStack(tag)
+        fragment.enterTransition = Fade(Fade.IN)
+        fragment.exitTransition = Fade(Fade.OUT)
+        transaction?.commit()
+    }
+
+
+    fun addFragmentInActivityFadeAnimationBundle(fragmentManager: FragmentManager?, fragment: Fragment, frameId: Int, addToBackstack: Boolean, tag: String) {
         val transaction = fragmentManager?.beginTransaction()
         transaction?.add(frameId, fragment, tag)
         if (addToBackstack)
@@ -128,7 +137,7 @@ object Utils {
     fun makeFlashOn(context: Context?) {
         val cam = Camera.open()
         val p = cam.getParameters()
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+        p.flashMode = Camera.Parameters.FLASH_MODE_TORCH
         cam.parameters = p
         cam.startPreview()
     }

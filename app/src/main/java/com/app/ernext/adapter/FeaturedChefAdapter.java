@@ -1,8 +1,8 @@
 package com.app.ernext.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.app.ernext.R;
 import com.app.ernext.fragments.home.model.FeaturedChefsModel;
+import com.app.ernext.home.DashboardModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class FeaturedChefAdapter extends RecyclerView.Adapter<FeaturedChefAdapter.MyViewHolder> {
 
-    private List<FeaturedChefsModel> countryList;
+    private List<DashboardModel.ChefRow> countryList;
     Context mContext;
     private OnclickListener onclickListener;
 
@@ -50,7 +51,7 @@ public class FeaturedChefAdapter extends RecyclerView.Adapter<FeaturedChefAdapte
         }
     }
 
-    public FeaturedChefAdapter(Context mContext, List<FeaturedChefsModel> countryList, OnclickListener _onclickListener) {
+    public FeaturedChefAdapter(Context mContext, List<DashboardModel.ChefRow> countryList, OnclickListener _onclickListener) {
         this.mContext = mContext;
         onclickListener = _onclickListener;
         this.countryList = countryList;
@@ -63,15 +64,15 @@ public class FeaturedChefAdapter extends RecyclerView.Adapter<FeaturedChefAdapte
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final FeaturedChefsModel c = countryList.get(position);
-        holder.tv_checfname.setText(c.getC_name());
-        holder.tv_likes.setText(String.valueOf(c.getC_likes()));
-        holder.rt_chef.setRating(Float.parseFloat(c.getC_rates()));
+        final DashboardModel.ChefRow c = countryList.get(position);
+        holder.tv_checfname.setText(c.getUserName());
+        //holder.tv_likes.setText(String.valueOf(c.get()));
+        holder.rt_chef.setRating(Float.parseFloat(c.getAvgUserRating()));
         holder.progressbar.setVisibility(View.VISIBLE);
         holder.iv_chefimage.setVisibility(View.VISIBLE);
         final ProgressBar progressView = holder.progressbar;
         Picasso.with(mContext)
-                .load(c.getC_images())
+                .load(c.getUserAvatar())
                 .into(holder.iv_chefimage, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
@@ -89,8 +90,8 @@ public class FeaturedChefAdapter extends RecyclerView.Adapter<FeaturedChefAdapte
             public void onClick(View v) {
                /* Intent a = new Intent(mContext, ActivityChefDetails.class);
                 mContext.startActivity(a);*/
-                if (onclickListener != null)
-                    onclickListener.onItemClickListener(c, holder.iv_chefimage);
+                /*if (onclickListener != null)
+                    onclickListener.onItemClickListener(c.getUserId(), holder.iv_chefimage);*/
             }
         });
 

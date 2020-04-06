@@ -1,16 +1,18 @@
 package com.app.ernext.others
 
+import com.app.ernext.home.DashboardModel
+import com.app.ernext.otp.model.OTPResponse
 import com.app.ernext.register.model.RegisterResponse
 import io.reactivex.Observable
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
 /* All Retrofit interfaces here */
 interface APIService {
 
-    @POST("register/format/json/")
+    @Headers("Content-Type: application/x-www-form-urlencoded")
     @FormUrlEncoded
+    @POST("register/format/json/")
     fun callSignUpAPI(@Field("name") fullname: String,
                       @Field("email") email: String,
                       @Field("password") password: String,
@@ -20,6 +22,18 @@ interface APIService {
                       @Field("device_token") device_token: String,
                       @Field("device_id") device_id: String,
                       @Field("device_type") device_type: String): Observable<RegisterResponse>
+
+    @POST("otp/format/json/")
+    @FormUrlEncoded
+    fun callOTPAPI(@Field("user_id") user_id: String,
+                      @Field("otp") otp: String,
+                      @Field("device_type") device_type: String,
+                      @Field("device_id") device_id: String): Observable<OTPResponse>
+
+    @GET("dashboard/format/json/")
+    fun callDashboardAPI(@Query("device_id") device_id: String,
+                         @Query("user_id") user_id: String,
+                         @Query("device_type") device_type: String): Call<DashboardModel>
 
 
     /*fullname:String,

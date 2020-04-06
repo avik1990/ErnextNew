@@ -9,15 +9,10 @@ import com.app.ernext.others.BaseView
 interface OTPContract {
 
     interface Presenter : BasePresenter {
-        fun signupUser(name: String,
-                       email: String,
-                       password: String,
-                       isdCode: String,
-                       mobile: String,
-                       mode: String,
-                       device_token: String,
-                       device_id: String,
-                       device_type: String)
+        fun validateOTP(userId: String,
+                       otp: String,
+                       deviceType: String,
+                        deviceID: String)
 
         fun validateOtp(otp: String)
         fun resendOtp(phoneno: String)

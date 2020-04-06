@@ -8,9 +8,9 @@ object RetrofitClient {
 
     private var retrofit: Retrofit? = null
 
-
     fun getClient(): Retrofit? {
         if (retrofit == null) {
+            //clearRetrofitInstance()
             retrofit = Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

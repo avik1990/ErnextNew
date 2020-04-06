@@ -5,8 +5,10 @@ import android.os.Handler
 import android.util.Base64
 import android.util.Log
 import com.app.ernext.R
+import com.app.ernext.others.AppData
 import com.app.ernext.others.Constants
 import com.app.ernext.others.showToast
+import com.app.ernext.otp.servicecall.OTPRepository
 import com.app.ernext.register.servicecall.RegisterRepository
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,10 +16,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
 
-class OTPPresenter(private val view: OTPContract.View, private val context: Context, private val enterOTPRepository: RegisterRepository) :
+class OTPPresenter(private val view: OTPContract.View, private val context: Context,
+                   private val enterOTPRepository: OTPRepository,private val appData:AppData) :
         OTPContract.Presenter {
-    override fun signupUser(name: String, email: String, password: String, isdCode: String, mobile: String, mode: String, device_token: String, device_id: String, device_type: String) {
-    }
 
     //lateinit var view: OTPContract.View
     var mobileNumber: String? = ""
@@ -31,7 +32,6 @@ class OTPPresenter(private val view: OTPContract.View, private val context: Cont
 
     init {
         handler = Handler()
-
     }
 
     override fun validateOtp(otp: String) {
@@ -56,7 +56,7 @@ class OTPPresenter(private val view: OTPContract.View, private val context: Cont
         counter = 60
         stopTimer()
         disposable?.dispose()
-        view.handleProgressAlert(false)
+        //view.handleProgressAlert(false)
     }
 
     override fun stopTimer() {
@@ -85,6 +85,44 @@ class OTPPresenter(private val view: OTPContract.View, private val context: Cont
             view.enableResendOTP()
         }
     }
+
+    override fun validateOTP(userId: String,
+                             otp: String,
+                             deviceType: String,
+                             deviceID: String) {
+
+        if (!view.isNetworkAvailable()) {
+            view.showNetworkUnavailableMsg()
+            return
+        }
+
+        view.handleProgressAlert(true)
+        disposable = enterOTPRepository.callOTPApi(userId, otp, deviceType, deviceID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    // Log.e(TAG, it.Response().data.toString() +"\n"+it.Response().salt.toString())
+                    view.handleProgressAlert(false)
+                    if (it.status.equals("1")) {
+                        showToast(context,it.msg.toString())
+                        view.goToNextPage()
+                    }else{
+                        showToast(context,it.msg.toString())
+                    }
+
+                }, {
+                    Log.e(TAG, it.toString())
+                    if (view.isActivityRunning()) {
+                        view.handleProgressAlert(false)
+                        if (view.isNetworkAvailable())
+                            //view.showSomeErrorOccurredMsg(view.getString(R.string.someErrorOccurred))
+                        else view.showNetworkUnavailableMsg()
+                    }
+                })
+
+
+    }
+
 
     override fun otpafterrigistration() {
        /* if (!view.isNetworkAvailable()) {

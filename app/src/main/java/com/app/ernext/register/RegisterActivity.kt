@@ -10,6 +10,7 @@ import com.app.ernext.R
 import com.app.ernext.activity.LoginActivity
 import com.app.ernext.fragments.home.Homefragment
 import com.app.ernext.home.Dashboard
+import com.app.ernext.others.AppData
 import com.app.ernext.others.Constants
 import com.app.ernext.others.Utils
 import com.app.ernext.others.showToast
@@ -26,11 +27,12 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
     var isPrivacyChecked: Boolean = false
     var isUserTypeChecked: Boolean = false
     var userType: String = ""
-
+    lateinit var appData: AppData
 
     override fun initResources() {
         contex = this
-        RegisterPresenter(this, contex!!,RegisterProvider.getLoginRepository()).start()
+        appData = AppData(contex!!, Constants.Keys._KeyCryptoPreference)
+        RegisterPresenter(this, contex!!,RegisterProvider.getLoginRepository(),appData).start()
 
     }
 
@@ -48,10 +50,8 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
         }
 
         btn_register.setOnClickListener {
-            val i = Intent(contex, OTPActivity::class.java)
-            //i.putExtra(Constants.Keys.KEY_FRAGMENT_NAME, OTPActivity::class.java)
-            startActivity(i)
-           // registerUser()
+
+           registerUser()
         }
 
         chk_box.setOnCheckedChangeListener { compoundButton, isChecked ->
@@ -68,8 +68,8 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
             signupPresenter.signupUser(et_name.text.toString().trim(),et_email.text.toString().trim(),
                     et_password.text.toString().trim(),
                     et_isd.text.toString().trim(),et_number.text.toString().trim(),"direct",
-                    "ssfhb23",
-                    "0000","A")
+                    "ssgsgsgsgs453dfgf",
+                    "0000000000","A")
         }
     }
 
@@ -108,10 +108,8 @@ class RegisterActivity : BaseActivity(), View.OnClickListener, RegisterContract.
 
     override fun goToNextPage() {
         Utils.hideKeyboard(this)
-        val intent = Intent(contex, Dashboard::class.java)
-        intent.putExtra(Constants.Keys.KEY_FRAGMENT_NAME, Homefragment.CLASS_NAME)
+        val intent = Intent(contex, OTPActivity::class.java)
         startActivity(intent)
-        finish()
     }
 
     override fun isFragmentAlive(): Boolean {

@@ -3,6 +3,7 @@ package com.app.ernext.register
 import android.content.Context
 import android.util.Log
 import com.app.ernext.R
+import com.app.ernext.others.AppData
 import com.app.ernext.others.Constants
 import com.app.ernext.others.showToast
 import com.app.ernext.register.servicecall.RegisterRepository
@@ -11,7 +12,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class RegisterPresenter(viewSignup: RegisterContract.View, context: Context,private val signUpRepository: RegisterRepository) :
+class RegisterPresenter(viewSignup: RegisterContract.View,
+                        context: Context,
+                        private val signUpRepository: RegisterRepository, private val appData:AppData) :
         RegisterContract.Presenter {
 
     var viewSignup: RegisterContract.View
@@ -97,7 +100,12 @@ class RegisterPresenter(viewSignup: RegisterContract.View, context: Context,priv
                     // Log.e(TAG, it.Response().data.toString() +"\n"+it.Response().salt.toString())
                     viewSignup.handleProgressAlert(false)
                     if (it.status.equals("1")) {
-                        showToast(context,it.msg.toString())
+                        appData.user_id=it.data!!.user_id!!
+                        appData.user_mobile=it.data!!.user_mobile!!
+                        appData.user_name=it.data!!.user_name!!
+                        appData.user_email=it.data!!.user_email!!
+                        appData.user_email=it.data!!.user_email!!
+                        viewSignup.goToNextPage()
                     }else{
                         showToast(context,it.msg.toString())
                     }

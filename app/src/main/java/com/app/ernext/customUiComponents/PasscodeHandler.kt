@@ -51,7 +51,7 @@ class PasscodeHandler(private val etPasscode1: CustomEditText, private val etPas
                 etPasscode4.requestFocus()
 
             } else if (etPasscode4.isFocused) {
-                if (etPasscode4.text.length > 0 && etPasscode3.text.length > 0 && etPasscode2.text.length > 0 && etPasscode1.text.length > 0)
+                if (etPasscode4.text!!.length > 0 && etPasscode3.text!!.length > 0 && etPasscode2.text!!.length > 0 && etPasscode1.text!!.length > 0)
                     passcodeListener.onResult(true)
             }
         }
@@ -68,17 +68,17 @@ class PasscodeHandler(private val etPasscode1: CustomEditText, private val etPas
     /* View.OnKeyListener callback method, to handle back button on keyboard */
     override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_DEL) {
-            if (etPasscode2.isFocused && etPasscode1.text.length > 0) {
+            if (etPasscode2.isFocused && etPasscode1.text!!.length > 0) {
                 etPasscode1.requestFocus()
                 etPasscode1.setText("")
 
                 return true
-            } else if (etPasscode3.isFocused && etPasscode2.text.length > 0) {
+            } else if (etPasscode3.isFocused && etPasscode2.text!!.length > 0) {
                 etPasscode2.requestFocus()
                 etPasscode2.setText("")
 
                 return true
-            } else if (etPasscode4.isFocused && etPasscode3.text.length > 0) {
+            } else if (etPasscode4.isFocused && etPasscode3.text!!.length > 0) {
                 etPasscode3.requestFocus()
                 etPasscode3.setText("")
 

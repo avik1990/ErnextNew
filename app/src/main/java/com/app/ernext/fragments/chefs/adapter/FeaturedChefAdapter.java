@@ -1,9 +1,9 @@
 package com.app.ernext.fragments.chefs.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +14,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.app.ernext.R;
-import com.app.ernext.fragments.chefdetails.ChefDetails;
 import com.app.ernext.fragments.chefs.model.FeaturedChefs;
-import com.app.ernext.others.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

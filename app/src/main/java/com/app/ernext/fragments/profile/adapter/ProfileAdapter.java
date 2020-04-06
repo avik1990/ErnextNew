@@ -1,20 +1,16 @@
 package com.app.ernext.fragments.profile.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.ernext.R;
-import com.app.ernext.fragments.menus.model.MenusDeals;
 import com.app.ernext.fragments.menus.model.ProfileMenus;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

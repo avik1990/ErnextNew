@@ -1,7 +1,7 @@
 package com.app.ernext.fragments.menus.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +16,9 @@ import com.app.ernext.fragments.menus.model.MenusDeals;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
 /**
  * Created by Avik on 11-01-2017.
  */
-
 public class MenusAdapter extends RecyclerView.Adapter<MenusAdapter.MyViewHolder> {
 
     private List<MenusDeals> countryList;

@@ -26,8 +26,10 @@ class RegisterRepository(private val apiService: APIService) {
                 phoneNo,
                 mode,
                 device_token,
-                "DeviceID",
+                "0000",
                 Constants.Keys.DEVICE_TYPE)
     }
+
+
 
 }

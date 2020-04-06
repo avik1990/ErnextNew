@@ -2,32 +2,40 @@ package com.app.ernext.home
 
 import android.content.Context
 import android.content.Intent
-import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.ernext.BaseActivity
 import com.app.ernext.R
 import com.app.ernext.fragments.chefdetails.ChefDetails
-import com.app.ernext.fragments.home.Homefragment
-import com.app.ernext.others.CircularTextView
-import com.app.ernext.others.Constants
-import com.app.ernext.others.Utils
-import kotlinx.android.synthetic.main.activity_dashboard.*
-import kotlinx.android.synthetic.main.toolbar.*
-import android.support.design.widget.BottomNavigationView
 import com.app.ernext.fragments.chefs.FragmentChefs
+import com.app.ernext.fragments.home.Homefragment
 import com.app.ernext.fragments.menus.FragmentDeals
 import com.app.ernext.fragments.menus.FragmentMenus
 import com.app.ernext.fragments.menus.Fragmentprofile
+import com.app.ernext.home.adapter.DashboardMenuAdapter
+import com.app.ernext.others.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.activity_dashboard.*
+import kotlinx.android.synthetic.main.activity_dashboard_inc.*
+import kotlinx.android.synthetic.main.toolbar.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, DashboardMenuAdapter.GetIdFromMenuAdapter, View.OnClickListener {
 
     lateinit var context:Context
+    lateinit var menuAdapter:DashboardMenuAdapter
+    lateinit var  intermenuadapter: DashboardMenuAdapter.GetIdFromMenuAdapter
+    var dashresponse:DashboardModel?=null
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -37,16 +45,21 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
         return true
     }
 
+    private val loader by lazy {
+        LoaderDialog(context)
+    }
+
     override fun initResources() {
         context=this
-        parseIntent(intent)
+        intermenuadapter=this
 
+        btn_menu.setOnClickListener(this)
         bottomNavigation.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
-
             when (item.itemId) {
                 R.id.nav_home -> {
                     if (supportFragmentManager.findFragmentById(R.id.container) !is Homefragment) {
-                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, Homefragment.newInstance(),
+                        Utils.replaceFragmentInActivityFadeAnimation(supportFragmentManager, Homefragment.newInstance("Hello World",dashresponse!!.getData()!!.bannerRows!!,
+                                dashresponse!!.getData()!!.chefRows!!,dashresponse!!.getData()!!.dishRows!!),
                                 R.id.container, true, Homefragment.CLASS_NAME)
                     }
                 }
@@ -97,6 +110,7 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
         val tv_cartcount = findViewById<CircularTextView>(R.id.tv_cartcount)
         tv_cartcount.setSolidColor("#002f49")
         Utils.BottomNavigationViewHelper.removeShiftMode(bottomNavigation)
+        verifyUser()
     }
 
     override fun getLayout(): Int {
@@ -114,7 +128,9 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
                 setUpScreenUiForFragment(fragName)
                 when (fragName) {
                     Homefragment.CLASS_NAME -> {
-                        Utils.addFragmentInActivityFadeAnimation(supportFragmentManager, Homefragment.newInstance(),
+                        Utils.addFragmentInActivityFadeAnimation(supportFragmentManager,
+                                Homefragment.newInstance("Hello World",dashresponse!!.getData()!!.bannerRows!!,
+                                        dashresponse!!.getData()!!.chefRows!!,dashresponse!!.getData()!!.dishRows!!),
                                 R.id.container, false, Homefragment.CLASS_NAME)
                     }
                 }
@@ -210,6 +226,47 @@ class Dashboard : BaseActivity(), NavigationView.OnNavigationItemSelectedListene
             SavedCardsFragment.CLASS_NAME -> {
                 tvCommonToolbar.setText(getString(R.string.savedCards))
             }*/
+        }
+    }
+
+    private fun verifyUser() {
+        loader.show()
+        val redditAPI: APIService
+
+        redditAPI = RetrofitClient.getClient()!!.create(APIService::class.java)
+        val call: Call<DashboardModel> = redditAPI.callDashboardAPI("0000","0","A")
+        call.enqueue(object : Callback<DashboardModel?> {
+            override fun onResponse(call: Call<DashboardModel?>, response: Response<DashboardModel?>) {
+                Log.d("String", "" + response)
+                if (response.isSuccessful()) {
+                    dashresponse = response.body()
+                    Log.e("Response",response.toString())
+                    if (dashresponse!!.getStatus()== 1) {
+                        //showToast(context,""+dashresponse!!.getData()!!.catRows!!.size)
+                        menuAdapter = DashboardMenuAdapter(context!!, dashresponse!!.getData()!!.catRows, intermenuadapter)
+                        val layoutManager1 = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        rcNavMenu.layoutManager=layoutManager1
+                        rcNavMenu.setAdapter(menuAdapter)
+                        parseIntent(intent)
+                    } else {
+                    }
+                }
+                loader.hide()
+            }
+
+            override fun onFailure(call: Call<DashboardModel?>, t: Throwable) {
+                loader.hide()
+            }
+        })
+    }
+
+    override fun returnedID(id: String?) {
+        showToast(context,""+id)
+    }
+
+    override fun onClick(v: View?) {
+        if(v===btn_menu){
+            drawer_layout.openDrawer(GravityCompat.START)
         }
     }
 }

@@ -9,7 +9,7 @@ class EnterAmountEditTextHandler(private val editText: CustomEditText, private v
     init {
         editText.addTextChangedListener(this)
         //editText.setText("$")
-        Selection.setSelection(editText.text, editText.text.length)
+        Selection.setSelection(editText.text, editText.text!!.length)
     }
 
     interface EnterAmountEditTextListener {

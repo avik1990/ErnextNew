@@ -21,23 +21,36 @@ import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.activity_register.rl_signup
 import kotlinx.android.synthetic.main.activity_register.tv_register
 import kotlinx.android.synthetic.main.enter_otp_layout.*
+import com.goodiebag.pinview.Pinview
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import com.app.ernext.others.AppData
+import com.app.ernext.otp.servicecall.OTPProvider
 
-class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,PasscodeHandler.PasscodeListener {
+class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View {
 
     var contex: Context? = null
     lateinit var enterOtpPresenter: OTPPresenter
+    lateinit var appData: AppData
+    var stOTP:String="";
 
     override fun initResources() {
         contex = this
-        OTPPresenter(this, contex!!,RegisterProvider.getLoginRepository()).start()
-        PasscodeHandler(etOtp1, etOtp2, etOtp3, etOtp4, this)
+        appData = AppData(contex!!, Constants.Keys._KeyCryptoPreference)
+        OTPPresenter(this, contex!!, OTPProvider.getLoginRepository(),appData).start()
     }
 
     override fun initListeners() {
+        pinview.setPinViewEventListener { pinview, fromUser ->
+            btSubmitEnterOtp.isEnabled=true
+            stOTP=pinview.value
+        }
     }
 
-  /*  private fun registerUser() {
-        if(enterOtpPresenter.checkFieldsValidation(et_name.text.toString().trim(),et_email.text.toString().trim(),
+    private fun registerUser() {
+        /*if(enterOtpPresenter.checkFieldsValidation(et_name.text.toString().trim(),et_email.text.toString().trim(),
                 et_password.text.toString().trim(),
                 et_isd.text.toString().trim(),et_number.text.toString().trim(),
                 isPrivacyChecked)){
@@ -47,8 +60,8 @@ class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,Passc
                     et_isd.text.toString().trim(),et_number.text.toString().trim(),"direct",
                     "ssfhb23",
                     "0000","A")
-        }
-    }*/
+        }*/
+    }
 
     override fun getLayout(): Int {
         return R.layout.activity_otp
@@ -59,6 +72,14 @@ class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,Passc
 
     override fun onClick(v: View?) {
 
+        if(v!!.id==R.id.btSubmitEnterOtp){
+            /*userId: String,
+            otp: String,
+            deviceType: String,
+            deviceID: Strin*/
+            enterOtpPresenter.validateOTP(appData.user_id,stOTP,Constants.Keys.DEVICE_TYPE,"0000")
+        }
+
     }
 
     override fun goToNextPage() {
@@ -66,7 +87,7 @@ class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,Passc
         val intent = Intent(contex, Dashboard::class.java)
         intent.putExtra(Constants.Keys.KEY_FRAGMENT_NAME, Homefragment.CLASS_NAME)
         startActivity(intent)
-        finish()
+        finishAffinity()
     }
 
     override fun isFragmentAlive(): Boolean {
@@ -94,11 +115,6 @@ class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,Passc
         Toast.makeText(contex, msg, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResult(status: Boolean) {
-        if (status) {
-            btSubmitEnterOtp.performClick()
-        }
-    }
 
     override fun gotoResetPasscodeScreen() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -132,6 +148,6 @@ class OTPActivity : BaseActivity(), View.OnClickListener, OTPContract.View,Passc
     }
 
     override fun showMobileNumberOnScreen(number: String) {
-        tvOtpSentMsg.text = String.format(getString(R.string.otpSentMsg, number))
+        tvOtpSentMsg.text = String.format(getString(R.string.otpSentMsg, appData.user_mobile))
     }
 }

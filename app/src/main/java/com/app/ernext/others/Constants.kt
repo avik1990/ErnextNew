@@ -11,6 +11,8 @@ object Constants {
     object Keys {
         /* All preferences are stored in one file, changing the _key and _secretKey*/
         val _CryptoPrefsFilename = "_CryptoPrefsFilename"
+        val _CryptoPrefsFilenameToken = "_CryptoPrefsFilenameToken"
+
         /* Required for finger print check */
         val _KEYSTORE_TYPE = "AndroidKeyStore"
         val _KEYSTORE_ALIASNAME = "_KEYSTORE_ALIASNAME"
@@ -21,6 +23,7 @@ object Constants {
         /* Fragment name key. Required to redirect in specific fragment from HomeFragment/DashboardActivity */
         val KEY_FRAGMENT_NAME: String = "fragmentName"
         val KEY_FROM_WHICH_FRAGMENT_CALLING: String = "fromWhichFragmentCalling"
+        val _KeyCryptoPreference = "_cryptopreference"  /// change in the MyFirebaseInstanceService
 
         /* Used in Enter OTP page, to show mobile number */
         val KEY_MOBILE_NUMBER = "keyMobileNumber"
@@ -31,7 +34,10 @@ object Constants {
         val REQUEST_MONEY_TAB_POSITION = 1
         val PAY_MONEY_TAB_POSITION = 2
         val DEVICE_TYPE = "A"
-
+        val _password = "password"
+        val _device_type = "device_type"
+        val _device_token = "device_token"
+        val _country_code = "country_code"
         /* Required to select country codes and return to the calling activity with result */
         val KEY_SELECTED_COUNTRY_CODE = "keySelectedCountryCode"
     }
@@ -65,15 +71,15 @@ object Constants {
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         return OkHttpClient().newBuilder()
-                .connectTimeout(100 * 10, TimeUnit.SECONDS)
-                .readTimeout(100 * 10, TimeUnit.SECONDS)
-                .writeTimeout(100 * 10, TimeUnit.SECONDS)
+                .connectTimeout(100 * 20, TimeUnit.SECONDS)
+                .readTimeout(100 * 20, TimeUnit.SECONDS)
+                .writeTimeout(100 * 20, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .addInterceptor { chain ->
                     val request = chain.request()
                             ?.newBuilder()
                             //?.addHeader("Content-Type", "application/json")
-                            ?.addHeader("Content-Type", "application/json")
+                            ?.addHeader("Content-Type", "application/json; charset=utf-8")
                             ?.build()
                     chain.proceed(request)
                 }
